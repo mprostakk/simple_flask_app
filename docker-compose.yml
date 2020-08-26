@@ -1,0 +1,24 @@
+version: "3"
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    env_file: .env.debug
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_DEBUG=1
+      - MONGO_DB=db
+    volumes:
+      - .:/app
+    command: flask run --host=0.0.0.0 
+    depends_on:
+      - db
+  db:
+    image: mongo:latest
+#    env_file: .env.debug
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: root
+#      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    ports:
+      - 27017:27017
