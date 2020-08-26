@@ -4,6 +4,9 @@ from flask_jwt_extended import create_access_token
 
 
 def login(json_data):
+
+    # TODO - get user to common.py
+
     username = json_data.get('username', None)
     password = json_data.get('password', None)
 
@@ -25,6 +28,8 @@ def login(json_data):
 
 
 def register(data):
+
+    # TODO - user schema load
 
     # try:
     #     user_json = user_schema.load(json_data)

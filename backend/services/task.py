@@ -4,6 +4,8 @@ from backend.extension import scheduler
 import datetime
 import requests
 
+
+# TODO - to common.py
 def get_user(username):
     return User.objects.filter(username=username).first()
 
@@ -24,6 +26,7 @@ def create_task(current_user, json_data):
 
         task_return_json = task_schema.dump(task)
 
+    # TODO - catch specific exceptions: unique
     except Exception as e:
         return {"success": False, "message": str(e)}
 
@@ -38,15 +41,15 @@ def create_task(current_user, json_data):
 
 
 def add_task_to_schedular(user, task):
-
-    URL = user.slack_api
-    JSON = {'text': f'{task.name} - {task.message}'}
-    requests.post(url=URL, json=JSON)
+    url = user.slack_api
+    json = {'text': f'{task.name} - {task.message}'}
+    requests.post(url=url, json=json)
 
 
 def edit_task(current_user, json_data):
     user = get_user(current_user)
 
+    # TODO - finish finding specific task
     for task in user.tasks:
         # return {'task': task}, 200
 
@@ -67,6 +70,7 @@ def delete_task(current_user, json_data):
     raise NotImplemented
 
 
+# TODO - check this week, not 7 days back
 def week_tasks(current_user):
     user = get_user(current_user)
     tasks = []
@@ -80,6 +84,7 @@ def week_tasks(current_user):
     return {'data': tasks}, 200
 
 
+# TODO - check this month, not 30 days back
 def month_tasks(current_user):
     user = get_user(current_user)
     tasks = []

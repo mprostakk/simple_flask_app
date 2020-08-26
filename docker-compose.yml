@@ -16,9 +16,10 @@ services:
       - db
   db:
     image: mongo:latest
-#    env_file: .env.debug
-#    environment:
-#      MONGO_INITDB_ROOT_USERNAME: root
-#      MONGO_INITDB_ROOT_PASSWORD: rootpassword
     ports:
       - 27017:27017
+  tests:
+    build: .
+    command: nose2
+    volumes:
+    - .:/app
