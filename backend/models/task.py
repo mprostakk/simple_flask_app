@@ -1,9 +1,12 @@
 from backend.extension import db
 import datetime
 from marshmallow import Schema, fields
+from bson.objectid import ObjectId
 
 
 class Task(db.EmbeddedDocument):
+    _id = db.ObjectIdField( required=True, default=lambda: ObjectId() )
+
     name = db.StringField(required=True)
     message = db.StringField()
     date_created = db.DateTimeField(default=datetime.datetime.utcnow)

@@ -1,7 +1,9 @@
 from flask import Flask
-from backend.extension import db, jwt, bcrypt
+from backend.extension import db, jwt, bcrypt, scheduler
 import os
 import datetime
+import time
+import atexit
 
 
 def create_app():
@@ -32,6 +34,9 @@ def register_extensions(app):
     db.init_app(app)
     jwt.init_app(app)
     bcrypt.init_app(app)
+
+    scheduler.start()
+    atexit.register(lambda: scheduler.shutdown())
 
 
 def register_blueprints(app):

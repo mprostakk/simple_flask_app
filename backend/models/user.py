@@ -6,17 +6,13 @@ from marshmallow import Schema, fields
 class User(db.Document):
     username = db.StringField(required=True, unique=True)
     password = db.StringField(required=True)
-    slack_api = db.StringField()
+    slack_api = db.StringField(required=True)
     tasks = db.EmbeddedDocumentListField(Task)
 
 
 class UserSchema(Schema):
     id = fields.String(dump_only=True)
     username = fields.String()
-
-    # TODO - only_dump reverse
-    # password = fields.String ()
-
     slack_api = fields.String()
     tasks = fields.List(fields.Nested(TaskSchema))
 
