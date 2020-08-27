@@ -13,4 +13,4 @@ Uses mongomock for mocking mongodb.
 
 
 ## Todo:
-- 
+- week, month as filters

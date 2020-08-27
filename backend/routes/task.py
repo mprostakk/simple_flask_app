@@ -42,8 +42,6 @@ def task_delete():
     return jsonify(body), status
 
 
-# TODO
-# - week, month as filters
 @bp.route('/task/week', methods=['GET'])
 @jwt_required
 def get_tasks_week():

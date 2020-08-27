@@ -9,16 +9,16 @@ def create_app():
     app = Flask(__name__.split('.')[0])
 
     db_env = os.getenv('MONGO_DB', '')
+    db_port = int(os.getenv('MONGO_PORT', 27017))
+    db_name = os.getenv('MONGO_NAME', 'test-project1')
 
-    # TODO - db, port to .env
     app.config['MONGODB_SETTINGS'] = {
-        'db': 'taskproject1',
+        'db': db_name,
         'host': db_env,
-        'port': 27017
+        'port': db_port
     }
 
-    # TODO - secret to .env
-    app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
+    app.config['JWT_SECRET_KEY'] = os.getenv('JWT_KEY', 'test-secret')
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(days=1)
 
     register_extensions(app)

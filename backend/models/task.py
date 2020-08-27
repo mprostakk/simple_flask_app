@@ -5,7 +5,7 @@ from bson.objectid import ObjectId
 
 
 class Task(db.EmbeddedDocument):
-    _id = db.ObjectIdField( required=True, default=lambda: ObjectId() )
+    _id = db.ObjectIdField(required=True, default=lambda: ObjectId())
 
     name = db.StringField(required=True)
     message = db.StringField()
@@ -15,7 +15,7 @@ class Task(db.EmbeddedDocument):
 
 
 class TaskSchema(Schema):
-    id = fields.String(dump_only=True)
+    _id = fields.String(dump_only=True)
     name = fields.String()
     message = fields.String()
     date_created = fields.DateTime(dump_only=True)
@@ -23,3 +23,4 @@ class TaskSchema(Schema):
 
 
 task_schema = TaskSchema()
+tasks_schema = TaskSchema(many=True)

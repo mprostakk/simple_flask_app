@@ -1,18 +1,17 @@
 from backend.models.user import User, user_schema
-from backend.models.task import Task, task_schema
+from backend.models.task import Task, task_schema, tasks_schema
 from backend.extension import scheduler
 import datetime
 import requests
 
 
-# TODO - to common.py
 def get_user(username):
     return User.objects.filter(username=username).first()
 
 
 def get_all_tasks(current_user):
     user = get_user(current_user)
-    return {"success": True, "data": user_schema.dump(user)}, 200
+    return {'success': True, 'data': user_schema.dump(user)}, 200
 
 
 def create_task(current_user, json_data):
@@ -23,24 +22,21 @@ def create_task(current_user, json_data):
         user = get_user(current_user)
         user.tasks.append(task)
         user.save()
-
         task_return_json = task_schema.dump(task)
-
-    # TODO - catch specific exceptions: unique
     except Exception as e:
-        return {"success": False, "message": str(e)}
+        return {'success': False, 'message': 'Error while saving task to user'}, 422
 
     scheduler.add_job(
-        add_task_to_schedular,
+        add_task_to_scheduler,
         'date',
         run_date=task.date_schedule,
         args=[user, task]
     )
 
-    return {"success": True, "data": task_return_json}, 200
+    return {'success': True, 'data': task_return_json}, 200
 
 
-def add_task_to_schedular(user, task):
+def add_task_to_scheduler(user, task):
     url = user.slack_api
     json = {'text': f'{task.name} - {task.message}'}
     requests.post(url=url, json=json)
@@ -48,29 +44,42 @@ def add_task_to_schedular(user, task):
 
 def edit_task(current_user, json_data):
     user = get_user(current_user)
+    try:
+        id_task = json_data['id']
+    except KeyError as e:
+        return {'success': False, 'message': 'Not id field'}, 422
 
-    # TODO - finish finding specific task
-    for task in user.tasks:
-        # return {'task': task}, 200
+    try:
+        data = json_data['data']
+    except KeyError as e:
+        return {'success': False, 'message': 'No data object'}, 422
 
-        if task == json_data['id']:
-            return {'data': task}, 200
-    else:
-        return {'success': False}, 400
+    for count, task in enumerate(user.tasks):
+        if str(task._id) == id_task:
+            task_json = task_schema.load(data)
 
-    # try:
-    #     task = Task.objects.filter(id=json_data['id'])
-    # except Exception as e:
-    #     return {'success': False, 'message': str(e)}, 422
+            for key, value in task_json.items():
+                setattr(task, key, value)
 
-    return {'success': True, 'data': 123}, 200
+            user.save()
+            return {'success': True, 'data': task_schema.dump(task)}, 200
+
+    return {'success': False, 'message': 'Task not found'}, 400
 
 
 def delete_task(current_user, json_data):
-    raise NotImplemented
+    user = get_user(current_user)
+    id_task = json_data['id']
+
+    for count, task in enumerate(user.tasks):
+        if str(task._id) == id_task:
+            user.tasks.pop(count)
+            user.save()
+            return {'success': True, 'data': user_schema.dump(user)}, 200
+
+    return {'success': False, 'message': 'Not found'}, 400
 
 
-# TODO - check this week, not 7 days back
 def week_tasks(current_user):
     user = get_user(current_user)
     tasks = []
@@ -81,10 +90,9 @@ def week_tasks(current_user):
         if 0 <= timedelta.days <= 7:
             tasks.append(task)
 
-    return {'data': tasks}, 200
+    return {'data': tasks_schema.dump(tasks)}, 200
 
 
-# TODO - check this month, not 30 days back
 def month_tasks(current_user):
     user = get_user(current_user)
     tasks = []
@@ -95,4 +103,4 @@ def month_tasks(current_user):
         if 0 <= timedelta.days <= 30:
             tasks.append(task)
 
-    return {'data': tasks}, 200
+    return {'data': tasks_schema.dump(tasks)}, 200
