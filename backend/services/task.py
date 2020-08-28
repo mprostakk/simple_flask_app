@@ -11,7 +11,7 @@ def get_user(username):
 
 def get_all_tasks(current_user):
     user = get_user(current_user)
-    return {'success': True, 'data': user_schema.dump(user)}, 200
+    return {'success': True, 'data': tasks_schema.dump(user.tasks)}, 200
 
 
 def create_task(current_user, json_data):
@@ -24,7 +24,7 @@ def create_task(current_user, json_data):
         user.save()
         task_return_json = task_schema.dump(task)
     except Exception as e:
-        return {'success': False, 'message': 'Error while saving task to user'}, 422
+        return {'success': False, 'message': 'Error while saving task to user'}, 400
 
     scheduler.add_job(
         add_task_to_scheduler,
@@ -47,12 +47,12 @@ def edit_task(current_user, json_data):
     try:
         id_task = json_data['id']
     except KeyError as e:
-        return {'success': False, 'message': 'Not id field'}, 422
+        return {'success': False, 'message': 'Not id field'}, 400
 
     try:
         data = json_data['data']
     except KeyError as e:
-        return {'success': False, 'message': 'No data object'}, 422
+        return {'success': False, 'message': 'No data object'}, 400
 
     for count, task in enumerate(user.tasks):
         if str(task._id) == id_task:
@@ -64,7 +64,7 @@ def edit_task(current_user, json_data):
             user.save()
             return {'success': True, 'data': task_schema.dump(task)}, 200
 
-    return {'success': False, 'message': 'Task not found'}, 400
+    return {'success': False, 'message': 'Task not found'}, 404
 
 
 def delete_task(current_user, json_data):
@@ -77,7 +77,7 @@ def delete_task(current_user, json_data):
             user.save()
             return {'success': True, 'data': user_schema.dump(user)}, 200
 
-    return {'success': False, 'message': 'Not found'}, 400
+    return {'success': False, 'message': 'Not found'}, 404
 
 
 def week_tasks(current_user):

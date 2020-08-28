@@ -25,7 +25,7 @@ class TestUser(unittest.TestCase):
         body, status = service_auth.login({
             'username': 'user'
         })
-        assert status == 422
+        assert status == 400
 
     def test_service_register_user(self):
         user = {

@@ -9,12 +9,12 @@ def login(json_data):
     password = json_data.get('password', None)
 
     if username is None or password is None:
-        return {'success': False, 'message': 'Username or password missing'}, 422
+        return {'success': False, 'message': 'Username or password missing'}, 400
 
     user = User.objects.filter(username=username).first()
 
     if not bcrypt.check_password_hash(user.password, password):
-        return {'success': False, 'message': 'Username or password is invalid'}, 422
+        return {'success': False, 'message': 'Username or password is invalid'}, 401
 
     access_token = create_access_token(identity=username)
     return {'token': access_token}, 200
@@ -30,12 +30,12 @@ def register(json_data):
     try:
         user_json = user_schema.load(json_data)
     except Exception as e:
-        return {'success': False, 'message': str(e)}, 422
+        return {'success': False, 'message': str(e)}, 400
 
     try:
         user = User(**user_json, password=bcrypt.generate_password_hash(password))
         user.save()
     except Exception as e:
-        return {'success': False, 'message': str(e)}, 422
+        return {'success': False, 'message': str(e)}, 400
 
-    return {'success': True, 'data': user}, 200
+    return {'success': True, 'data': user_schema.dump(user)}, 200

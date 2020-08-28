@@ -38,10 +38,12 @@ class TestTask(unittest.TestCase):
             'date_schedule': '2020-08-26T07:11:07.132000'
         }
         body, status = service_task.create_task('user', task)
-        assert status == 422
+        assert status == 400
         assert body['success'] is False
 
     def test_service_get_all_tasks(self):
+        # TODO
+        # finish after setUp and tearDown will work properly
         task = {
             'name': 'test',
             'message': 'hello world',
@@ -53,7 +55,7 @@ class TestTask(unittest.TestCase):
 
         data = body['data']
 
-        print(data['tasks'])
+        print(len(data['tasks']))
 
         # assert len(data['tasks']) == 2
         # assert data['tasks'][0]['name'] == 'test'
