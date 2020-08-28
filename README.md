@@ -162,9 +162,9 @@ Example Response 200
 }
 ```
 
-### Get tasks in one week back (/task/week) GET
+### Get tasks one week back (/task/week) GET
 
-### Get tasks in one month back (/task/month) GET
+### Get tasks one month back (/task/month) GET
 
 
 ## Todo:
@@ -177,3 +177,4 @@ Example Response 200
 - more tests on auth
 - more tests on task
 - test schedular
+- catch only specific Exceptions on try/catch blocks
