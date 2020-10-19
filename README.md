@@ -1,4 +1,4 @@
-# Embiq task
+# Simple flask app
 
 To run debug flask app on port ```5000```.
 ```
